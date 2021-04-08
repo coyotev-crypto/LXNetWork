@@ -1,0 +1,6 @@
+include ':network'
+include ':app'
+rootProject.name = "LXNetHttp"
+include ':LXAnnotation'
+include ':LXCompiler'
+include ':LXBind'
