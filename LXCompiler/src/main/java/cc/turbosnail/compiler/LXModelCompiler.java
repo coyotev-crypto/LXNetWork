@@ -178,12 +178,20 @@ public class LXModelCompiler extends AbstractProcessor {
             }else {
                 length = length - 1;
             }
-            writer.write("\t\t" + annotationUtils.getNetworkEngineSimpleName() + ".getService(" + annotationUtils.getNetworkServiceSimpleName() + ".class)\n");
+            if (!annotationUtils.getNetworkEnginePackage().equals("cc.turbosnail.lrhannotation.NetworkEngine")) {
+                writer.write("\t\t" + annotationUtils.getNetworkEnginePackage());
+            } else {
+                writer.write("\t\tLrhHttp");
+            }
+            writer.write(".getService(" + annotationUtils.getNetworkServiceSimpleName() + ".class)\n");
             writer.write("\t\t\t." + methodInfo.getMethodName() + "(");
             for (int i = 0; i < length; i++) {
                 VariableElement variableElement = variableElements.get(i);
                 String parameterName = variableElement.getSimpleName().toString();
                 writer.write(parameterName);
+                if (i != length-1){
+                    writer.write(",");
+                }
             }
             writer.write(")");
             if (!methodInfo.getReturnType().equals("void")) {
