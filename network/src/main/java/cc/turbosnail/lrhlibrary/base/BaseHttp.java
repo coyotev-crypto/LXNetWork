@@ -2,11 +2,14 @@ package cc.turbosnail.lrhlibrary.base;
 
 import android.annotation.SuppressLint;
 
+import com.google.gson.GsonBuilder;
+
 import java.util.HashMap;
 
 import cc.turbosnail.lrhlibrary.annotation.BaseUrl;
 import cc.turbosnail.lrhlibrary.annotation.TestUrl;
 import cc.turbosnail.lrhlibrary.error.HttpErrorHandler;
+import cc.turbosnail.lrhlibrary.factory.adapter.MyTypeAdapterFactory;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -45,6 +48,11 @@ public abstract class BaseHttp {
         mINetworkRequiredInf = iNetworkRequiredInf;
     }
 
+    public Retrofit getRetrofit(Class service,String mBaseUrl){
+        this.mBaseUrl = mBaseUrl;
+        return getRetrofit(service);
+    }
+
     protected Retrofit getRetrofit(Class service) {
         OkHttpClient mOkHttpClient = getOkHttpClient();
         Retrofit mRetrofit = new Retrofit.Builder()
@@ -53,6 +61,7 @@ public abstract class BaseHttp {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(new MyTypeAdapterFactory<>()).create()))
                 .build();
         retroFitHashMap.put(mBaseUrl + service.getName(), mRetrofit);
         return mRetrofit;
@@ -158,4 +167,5 @@ public abstract class BaseHttp {
     public void setBaseUrl(String baseUrl) {
         this.mBaseUrl = baseUrl;
     }
+
 }
