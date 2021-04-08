@@ -4,7 +4,18 @@ import android.annotation.SuppressLint;
 
 import com.google.gson.GsonBuilder;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import cc.turbosnail.lrhlibrary.annotation.BaseUrl;
 import cc.turbosnail.lrhlibrary.annotation.TestUrl;
@@ -40,6 +51,8 @@ public abstract class BaseHttp {
     private static HashMap<String, Retrofit> retroFitHashMap = new HashMap<>();  //Retrofit对象管理
     private HttpErrorHandler tHttpErrorHandler = new HttpErrorHandler<>();
 
+    public static boolean isNeiWaiNetWork = false;  //true 为内网 false为外网
+
     /***
      *  启动应用就初始化
      * @param iNetworkRequiredInf
@@ -48,10 +61,6 @@ public abstract class BaseHttp {
         mINetworkRequiredInf = iNetworkRequiredInf;
     }
 
-    public Retrofit getRetrofit(Class service,String mBaseUrl){
-        this.mBaseUrl = mBaseUrl;
-        return getRetrofit(service);
-    }
 
     protected Retrofit getRetrofit(Class service) {
         OkHttpClient mOkHttpClient = getOkHttpClient();
@@ -59,9 +68,8 @@ public abstract class BaseHttp {
                 .baseUrl(mBaseUrl)
                 .client(mOkHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(new MyTypeAdapterFactory<>()).create()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         retroFitHashMap.put(mBaseUrl + service.getName(), mRetrofit);
         return mRetrofit;
@@ -71,6 +79,10 @@ public abstract class BaseHttp {
         if (mOkHttpClient == null) {
             synchronized (this) {
                 OkHttpClient.Builder builder = new OkHttpClient.Builder();
+                builder.hostnameVerifier((hostname, session) -> true)
+                        .readTimeout(10, TimeUnit.SECONDS)
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .writeTimeout(10, TimeUnit.SECONDS);
                 if (getInterceptor() != null) {
                     builder.addInterceptor(getInterceptor());
                 }
@@ -82,10 +94,48 @@ public abstract class BaseHttp {
                 }
 //                builder.addInterceptor(new CommonHeaderInterceptor()) //添加请求头
 //                builder.addInterceptor(new CommonResponseIntercept()) //
+                //内网绕过https
+                if (isNeiWaiNetWork) {
+                    builder = bypassHttps(builder);
+                }
                 mOkHttpClient = builder.build();
             }
         }
         return mOkHttpClient;
+    }
+
+    /**
+     * 绕过https证书验证
+     *
+     * @param build
+     * @return
+     */
+    private OkHttpClient.Builder bypassHttps(OkHttpClient.Builder build) {
+        try {
+            TrustManager[] trustManagers = new TrustManager[]{new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[]{};
+                }
+            }};
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustManagers, new SecureRandom());
+            SSLSocketFactory socketFactory = sslContext.getSocketFactory();
+            build.sslSocketFactory(socketFactory);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return build;
     }
 
     /***
@@ -121,12 +171,18 @@ public abstract class BaseHttp {
     public synchronized <T> T getBaseService(Class<T> servlce) {
         //先判断BaseUrl是否存在
         if (null == mBaseUrl) {
-            if (parsingAnnotation(servlce)){
+            if (parsingAnnotation(servlce)) {
                 //如果不存在那就查找父类是否存在该注解
                 parsingInterfacesAnnotation(servlce);
             }
         }
         //初始化请求对象
+        if (mBaseUrl == null) {
+            throw new NullPointerException("BaseUrl is null, the solution is to add @BaseUrl or @TestUrl to the class");
+        }
+
+        isNeiWaiNetWork = mBaseUrl.contains("192.168.");  //内网
+
         return getRetrofit(servlce).create(servlce);
     }
 
@@ -153,6 +209,7 @@ public abstract class BaseHttp {
             if (parsingAnnotation(anInterface))
                 return;
         }
+
     }
 
 
