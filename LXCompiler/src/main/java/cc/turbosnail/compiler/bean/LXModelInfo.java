@@ -16,51 +16,17 @@ import cc.turbosnail.lrhannotation.LXModel;
  * @Version: 1.0
  */
 
-public class AnnotationInfo {
+public class LXModelInfo {
     private TypeElement typeElement;
     private LXModel lxModel;
     private String mNetworkEnginePackage;
     private String mNetworkServicePackage;
     private String mNetworkEngineSimpleName;
     private String mNetworkServiceSimpleName;
+    private LXModelImplInfo mModelImplInfo;
 
+    public LXModelInfo() {
 
-    public AnnotationInfo(TypeElement typeElement) {
-        this.typeElement = typeElement;
-        this.lxModel = typeElement.getAnnotation(LXModel.class);
-        parsingNetworkEngine();
-        parsingNetworkService();
-    }
-
-    private void parsingNetworkEngine() {
-        try {
-
-            Class aClass = lxModel.networkEngine();
-            mNetworkEngineSimpleName = aClass.getSimpleName();
-            mNetworkEnginePackage = aClass.getCanonicalName();
-        } catch (MirroredTypeException mte) {
-
-            DeclaredType declaredType = (DeclaredType) mte.getTypeMirror();
-            TypeElement classTypeElement = (TypeElement) declaredType.asElement();
-            mNetworkEnginePackage = declaredType.toString();
-            mNetworkEngineSimpleName = classTypeElement.getSimpleName().toString();
-        }
-
-    }
-
-    private void parsingNetworkService() {
-        try {
-
-            Class aClass = lxModel.networkService();
-            mNetworkServiceSimpleName = aClass.getSimpleName();
-            mNetworkServicePackage = aClass.getCanonicalName();
-        } catch (MirroredTypeException mte) {
-
-            DeclaredType declaredType = (DeclaredType) mte.getTypeMirror();
-            TypeElement classTypeElement = (TypeElement) declaredType.asElement();
-            mNetworkServicePackage = declaredType.toString();
-            mNetworkServiceSimpleName = classTypeElement.getSimpleName().toString();
-        }
     }
 
     public TypeElement getTypeElement() {
@@ -109,5 +75,13 @@ public class AnnotationInfo {
 
     public void setNetworkServiceSimpleName(String mNetworkServiceSimpleName) {
         this.mNetworkServiceSimpleName = mNetworkServiceSimpleName;
+    }
+
+    public LXModelImplInfo getModelImplInfo() {
+        return mModelImplInfo;
+    }
+
+    public void setModelImplInfo(LXModelImplInfo mModelImplInfo) {
+        this.mModelImplInfo = mModelImplInfo;
     }
 }

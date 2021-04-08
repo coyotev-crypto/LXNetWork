@@ -3,6 +3,7 @@ package cc.turbosnail.lrhnethttp;
 
 import cc.turbosnail.lrhannotation.Ignore;
 import cc.turbosnail.lrhannotation.LXModel;
+import cc.turbosnail.lrhannotation.LXModelImpl;
 import cc.turbosnail.lrhlibrary.BaseObserver;
 import cc.turbosnail.lrhlibrary.LrhHttp;
 import io.reactivex.Observable;
@@ -24,10 +25,11 @@ import io.reactivex.Observable;
 public interface MVP {
 
     @LXModel(value = "TestModel1", networkService = baidu.class)
+//    @LXModelImpl(ModelImpl.class)
     interface Model{
 
         @Ignore
-        Observable<String> driverStart(BaseObserver baseObserver);
+        void driverStart(BaseObserver baseObserver);
 
 //        void driverStart(BaseObserver baseObserver);
     }
