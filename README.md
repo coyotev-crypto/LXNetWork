@@ -60,7 +60,7 @@ public class MedicalGuideModel {
     public void bingIndex(BaseObserver baseObserver){
         LXHttp.getInstance().createService(BingApi.class)
                 .bingIndex()
-                .compose(LrhHttp.getInstance().applySchedulers(baseObserver));
+                .compose(LXHttp.getInstance().applySchedulers(baseObserver));
     }
 }
 ```

@@ -38,7 +38,7 @@ public class TestNetWork extends BaseHttp {
     }
 
     @Override
-    public Interceptor createInterceptor() {
+    public Interceptor[] createInterceptors() {
         return null;
     }
 
