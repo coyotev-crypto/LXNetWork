@@ -17,6 +17,26 @@
 
 `LXHttp.init(new NetworkConfig());`
 
+
+```
+public class NetworkConfig implements INetworkRequiredInfo {
+    @Override
+    public String getAppVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    @Override
+    public String getAppVersionCode() {
+        return String.valueOf(BuildConfig.VERSION_CODE);
+    }
+    
+    //是否打印日志
+    @Override
+    public boolean isDebug() {
+        return BuildConfig.DEBUG;
+    }
+}
+```
 **3、创建自己的网络请求接口**
 
 添加@BaseUrl或@TestUrl为你请求的路径
