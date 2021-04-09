@@ -26,8 +26,8 @@ public class MedicalGuideNetwork extends LXHttp {
     }
 
     @Override
-    public Interceptor createInterceptor() {
-        return new MedicalGuideInterceptor();
+    public Interceptor[] createInterceptors() {
+        return new Interceptor[]{new MedicalGuideInterceptor()};
     }
 
 }

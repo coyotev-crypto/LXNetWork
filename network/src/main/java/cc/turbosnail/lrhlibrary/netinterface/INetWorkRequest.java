@@ -1,5 +1,7 @@
 package cc.turbosnail.lrhlibrary.netinterface;
 
+import java.util.List;
+
 import cc.turbosnail.lrhlibrary.base.INetworkRequiredInfo;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
@@ -28,7 +30,7 @@ public interface INetWorkRequest {
     <T> T createService(Class<T> service);  //服务对象
     boolean parsingAnnotation(Class clazz);   //解析当前类注解
     void parsingInterfacesAnnotation(Class clazz);  //解析父类注解
-    Interceptor createInterceptor();        //拦截
+    Interceptor[] createInterceptors();        //拦截
     <T> Function<T, T> createAppErrorHandler();  //应用错误
     OkHttpClient.Builder bypassHttps(OkHttpClient.Builder build); //内网绕过
 }

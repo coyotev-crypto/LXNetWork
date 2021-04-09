@@ -60,7 +60,7 @@ public class NetworkTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("测试结束: ");
+        System.out.println("测试结束: " + Thread.currentThread());
     }
 
     @Test

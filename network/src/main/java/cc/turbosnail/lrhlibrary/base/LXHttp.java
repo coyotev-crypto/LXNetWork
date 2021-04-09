@@ -1,6 +1,5 @@
 package cc.turbosnail.lrhlibrary.base;
 
-import android.annotation.SuppressLint;
 import com.google.gson.GsonBuilder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -8,22 +7,14 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import cc.turbosnail.lrhlibrary.annotation.BaseUrl;
-import cc.turbosnail.lrhlibrary.annotation.TestUrl;
-import cc.turbosnail.lrhlibrary.error.HttpErrorHandler;
 import cc.turbosnail.lrhlibrary.factory.adapter.MyTypeAdapterFactory;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -44,7 +35,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */
-public class LXHttp extends BaseHttp{
+public class LXHttp extends BaseHttp {
 
     private OkHttpClient mOkHttpClient;
     private static HashMap<String, Retrofit> retroFitHashMap = new HashMap<>();  //Retrofit对象管理
@@ -52,7 +43,7 @@ public class LXHttp extends BaseHttp{
 
     private static LXHttp lxHttp = new LXHttp();
 
-    public static BaseHttp getInstance(){
+    public static BaseHttp getInstance() {
         return lxHttp;
     }
 
@@ -93,7 +84,7 @@ public class LXHttp extends BaseHttp{
 
     @Override
     public Retrofit createRetrofit(Class service) {
-        if (retroFitHashMap.get(mBaseUrl+ service.getName()) != null){
+        if (retroFitHashMap.get(mBaseUrl + service.getName()) != null) {
             return retroFitHashMap.get(mBaseUrl + service.getName());
         }
         OkHttpClient mOkHttpClient = createOkHttpClient();
@@ -117,8 +108,10 @@ public class LXHttp extends BaseHttp{
                         .readTimeout(10, TimeUnit.SECONDS)
                         .connectTimeout(10, TimeUnit.SECONDS)
                         .writeTimeout(10, TimeUnit.SECONDS);
-                if (createInterceptor() != null) {
-                    builder.addInterceptor(createInterceptor());
+                if (createInterceptors() != null) {
+                    for (Interceptor interceptor : createInterceptors()) {
+                        builder.addInterceptor(interceptor);
+                    }
                 }
                 if (mINetworkRequiredInf != null && mINetworkRequiredInf.isDebug()) {
                     //输出日志
@@ -139,7 +132,7 @@ public class LXHttp extends BaseHttp{
     }
 
     @Override
-    public Interceptor createInterceptor() {
+    public Interceptor[] createInterceptors() {
         return null;
     }
 
