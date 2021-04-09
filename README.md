@@ -64,22 +64,23 @@ public class MedicalGuideModel {
     }
 }
 ```
-说明：@LXModel 用于生成模板代码
+**说明：@LXModel 用于生成模板代码
       value 生成代码的名称
-      networkEngine 用于发起网络请求的类 必须继承LrhHttp或继承BaseHttp如果是继承BaseHttp请添加getService方法。
+      networkEngine 用于发起网络请求的类 必须继承LXHttp或继承BaseHttp，还可以实现INetWorkRequest接口。
       networkService 网络请求接口
+      @LXModelImpl 自定义实现网络请求方法   LXModelImpl注解**
 
-      @LXModelImpl 自定义实现网络请求方法   LXModelImpl注解
-
-**5、使用LXBind.bind方法进行绑定，如下图**
-![使用](app/src/main/res/mipmap-mdpi/employ.png)
-
-如果你不满意想自己封装网络库也是可以的，你可以继承BaseHttp去实现，你必须有有一个getInstance()，返回当前实现的单例。
+如果你不满意想自己封装网络库也是可以的，必须继承LXHttp，BaseHttp或实现INetWorkRequest接口，以上实现你都必须有一个getInstance()方法，返回当前实现的单例。
 比如：
-
 ```
 public class TestNetWork extends BaseHttp {
-    
+
+    private static TestNetWork testHttp = new TestNetWork();
+
+    public static TestNetWork getInstance(){
+        return testHttp;
+    }
+
     @Override
     public Retrofit createRetrofit(Class service) {
         return null;
@@ -106,4 +107,7 @@ public class TestNetWork extends BaseHttp {
     }
 }
 ```
+**5、使用LXBind.bind方法进行绑定，如下图**
+![使用](app/src/main/res/mipmap-mdpi/employ.png)
+
 联系作者：QQ  758648178

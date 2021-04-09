@@ -22,7 +22,11 @@ import retrofit2.Retrofit;
  * @Version: 1.0
  */
 public class TestNetWork extends BaseHttp {
+    private static TestNetWork testHttp = new TestNetWork();
 
+    public static TestNetWork getInstance(){
+        return testHttp;
+    }
     @Override
     public Retrofit createRetrofit(Class service) {
         return null;
