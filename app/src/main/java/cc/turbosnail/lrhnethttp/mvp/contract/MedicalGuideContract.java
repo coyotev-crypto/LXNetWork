@@ -5,7 +5,7 @@ import cc.turbosnail.lrhannotation.LXModel;
 import cc.turbosnail.lrhannotation.LXModelImpl;
 import cc.turbosnail.lrhlibrary.BaseObserver;
 import cc.turbosnail.lrhnethttp.api.MedicalGuideApi;
-import cc.turbosnail.lrhnethttp.mvp.model.MedicalGuideModelImpl;
+import cc.turbosnail.lrhnethttp.mvp.model.MedicalGuideModel;
 import cc.turbosnail.lrhnethttp.network.MedicalGuideNetwork;
 import io.reactivex.Observable;
 import okhttp3.RequestBody;
@@ -26,7 +26,7 @@ public interface MedicalGuideContract {
 
 
     @LXModel(value = "MedicalGuideModel", networkEngine = MedicalGuideNetwork.class, networkService = MedicalGuideApi.class)
-    @LXModelImpl(MedicalGuideModelImpl.class) //被忽略的实现
+    @LXModelImpl(MedicalGuideModel.class) //被忽略的实现
     interface Model {
 
         void getGuideListByCategoryId(RequestBody requestBody, BaseObserver baseObserver);

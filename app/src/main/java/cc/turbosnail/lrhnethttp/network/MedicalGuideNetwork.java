@@ -1,9 +1,6 @@
 package cc.turbosnail.lrhnethttp.network;
 
-import cc.turbosnail.lrhlibrary.LrhHttp;
-import cc.turbosnail.lrhlibrary.base.BaseHttp;
-import cc.turbosnail.lrhnethttp.api.MedicalGuideApi;
-import cc.turbosnail.lrhnethttp.mvp.contract.MedicalGuideContract;
+import cc.turbosnail.lrhlibrary.base.LXHttp;
 import cc.turbosnail.lrhnethttp.network.interceptor.MedicalGuideInterceptor;
 import io.reactivex.functions.Function;
 import okhttp3.Interceptor;
@@ -20,7 +17,7 @@ import okhttp3.Interceptor;
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */
-public class MedicalGuideNetwork extends LrhHttp {
+public class MedicalGuideNetwork extends LXHttp {
 
     private static final MedicalGuideNetwork appNetWorkApi = new MedicalGuideNetwork();
 
@@ -28,21 +25,9 @@ public class MedicalGuideNetwork extends LrhHttp {
         return appNetWorkApi;
     }
 
-
     @Override
-    protected Interceptor getInterceptor() {
-        //添加头文件
+    public Interceptor createInterceptor() {
         return new MedicalGuideInterceptor();
     }
 
-
-    /**
-     * 错误处理
-     * @param <T>
-     * @return
-     */
-    @Override
-    protected <T> Function<T, T> getAppErrorHandler() {
-        return null;
-    }
 }

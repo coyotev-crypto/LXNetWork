@@ -96,14 +96,14 @@ public class ProcessLXModel implements ProcessAnnotation {
             writer.write("package " + packageName + ";\n");
             writer.write("import cc.turbosnail.lrhlibrary.BaseObserver;\n");
 
-            if (annotationUtils.getModelImplInfo() != null) {
-                writer.write("import " + annotationUtils.getModelImplInfo().getName() + ";\n");
-            }
+//            if (annotationUtils.getModelImplInfo() != null) {
+//                writer.write("import " + annotationUtils.getModelImplInfo().getName() + ";\n");
+//            }
 
             if (!annotationUtils.getNetworkEnginePackage().equals("cc.turbosnail.lrhannotation.NetworkEngine")) {
                 writer.write("import " + annotationUtils.getNetworkEnginePackage() + ";\n");
             } else {
-                writer.write("import cc.turbosnail.lrhlibrary.LrhHttp;\n");
+                writer.write("import cc.turbosnail.lrhlibrary.base.LXHttp;\n");
             }
             if (annotationUtils.getNetworkServicePackage() != null) {
                 writer.write("import " + annotationUtils.getNetworkServicePackage() + ";\n");
@@ -114,12 +114,12 @@ public class ProcessLXModel implements ProcessAnnotation {
             writer.write("public class " + className + " implements " + annotationUtils.getTypeElement().getQualifiedName() + "{\n");
 
             if (annotationUtils.getModelImplInfo() != null) {
-                writer.write("\tprivate " + annotationUtils.getModelImplInfo().getSimpleName() + " model;\n");
+                writer.write("\tprivate " + annotationUtils.getModelImplInfo().getName() + " model;\n");
                 // public TestModel() {
                 //        this.model = new ModelImpl();
                 //    }
                 writer.write("\tpublic " + className + "(){\n");
-                writer.write("\t\tthis.model = new " + annotationUtils.getModelImplInfo().getSimpleName() + "();\n");
+                writer.write("\t\tthis.model = new " + annotationUtils.getModelImplInfo().getName() + "();\n");
                 writer.write("\t}\n");
             }
 
@@ -174,16 +174,16 @@ public class ProcessLXModel implements ProcessAnnotation {
             //         *                 .saveCaseItem(requestBody);
             int length = variableElements.size();
             if (!methodInfo.getReturnType().equals("void")) {
-                writer.write("return");
+                writer.write("\t\treturn");
             } else {
                 length = length - 1;
             }
             if (!annotationUtils.getNetworkEnginePackage().equals("cc.turbosnail.lrhannotation.NetworkEngine")) {
                 writer.write("\t\t" + annotationUtils.getNetworkEnginePackage());
             } else {
-                writer.write("\t\tLrhHttp");
+                writer.write("\t\tLXHttp");
             }
-            writer.write(".getService(" + annotationUtils.getNetworkServiceSimpleName() + ".class)\n");
+            writer.write(".getInstance().createService(" + annotationUtils.getNetworkServiceSimpleName() + ".class)\n");
             writer.write("\t\t\t." + methodInfo.getMethodName() + "(");
             for (int i = 0; i < length; i++) {
                 VariableElement variableElement = variableElements.get(i);
@@ -201,7 +201,7 @@ public class ProcessLXModel implements ProcessAnnotation {
                 if (!annotationUtils.getNetworkEnginePackage().equals("cc.turbosnail.lrhannotation.NetworkEngine")){
                     writer.write(annotationUtils.getNetworkEngineSimpleName());
                 }else {
-                    writer.write("LrhHttp");
+                    writer.write("LXHttp");
                 }
                 writer.write(".getInstance().applySchedulers(" + variableElements.get(variableElements.size() - 1) + "));\n");
             }

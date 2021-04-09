@@ -2,7 +2,7 @@ package cc.turbosnail.lrhnethttp;
 
 import android.app.Application;
 
-import cc.turbosnail.lrhlibrary.LrhHttp;
+import cc.turbosnail.lrhlibrary.base.LXHttp;
 
 /**
  * @version V0.1.0
@@ -18,6 +18,6 @@ public class LrhApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LrhHttp.init(new NetworkConfig());
+        LXHttp.init(new NetworkConfig());
     }
 }

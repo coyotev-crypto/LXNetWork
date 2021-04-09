@@ -1,9 +1,8 @@
 package cc.turbosnail.lrhnethttp.mvp.model;
 
 import cc.turbosnail.lrhlibrary.BaseObserver;
-import cc.turbosnail.lrhlibrary.LrhHttp;
+import cc.turbosnail.lrhlibrary.base.LXHttp;
 import cc.turbosnail.lrhnethttp.api.BingApi;
-import cc.turbosnail.lrhnethttp.mvp.contract.MedicalGuideContract;
 
 /**
  * @ProjectName: LXNetHttp
@@ -17,11 +16,11 @@ import cc.turbosnail.lrhnethttp.mvp.contract.MedicalGuideContract;
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */
-public class MedicalGuideModelImpl {
+public class MedicalGuideModel {
     //添加@Ignore忽略的实现
     public void bingIndex(BaseObserver baseObserver){
-        LrhHttp.getService(BingApi.class)
+        LXHttp.getInstance().createService(BingApi.class)
                 .bingIndex()
-                .compose(LrhHttp.getInstance().applySchedulers(baseObserver));
+                .compose(LXHttp.getInstance().applySchedulers(baseObserver));
     }
 }
