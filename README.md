@@ -64,3 +64,4 @@ public interface MedicalGuideApi {
 ![使用](app/src/main/res/mipmap-mdpi/employ.png)
 
 如果你不满意想自己封装网络库也是可以的，你可以继承BaseHttp去实现，你必须有有一个getInstance()，返回当前实现的单例。
+联系作者：QQ  758648178
