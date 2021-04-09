@@ -20,14 +20,18 @@ import cc.turbosnail.lrhannotation.LXModelImpl;
  * @ProjectName: LrhNetHttp
  * @Package: cc.turbosnail.compiler
  * @ClassName: ParsingMethodInfoUtils
- * @Description: Parsing Method Info
+ * @Description: Parsing class Info
  * @Author: lrh
  * @CreateDate: 2021/4/7 17:16
  * @Version: 1.0
  */
 public class ParsingInfoUtils {
 
-
+    /**
+     * Analyze and add @LXModelImpl class information
+     * @param element
+     * @return
+     */
     public static LXModelImplInfo parsingLXModelImplInfo(TypeElement element){
         LXModelImplInfo lxModelImplInfo = new LXModelImplInfo();
         LXModelImpl annotation = element.getAnnotation(LXModelImpl.class);
@@ -49,6 +53,11 @@ public class ParsingInfoUtils {
         return lxModelImplInfo;
     }
 
+    /**
+     * Analysis method information
+     * @param element
+     * @return
+     */
     public static List<MethodInfo> parsingMethodInfo(TypeElement element) {
         List<? extends Element> enclosedElements = element.getEnclosedElements();
         List<MethodInfo> methodInfos = new ArrayList<>();
@@ -65,6 +74,11 @@ public class ParsingInfoUtils {
         return methodInfos;
     }
 
+    /**
+     * Analyze and add @LXModel class information
+     * @param typeElement
+     * @return
+     */
     public static LXModelInfo parsingLXModelInfo(TypeElement typeElement) {
         LXModel lxModel = typeElement.getAnnotation(LXModel.class);
         LXModelInfo lxModelInfo = new LXModelInfo();
@@ -72,11 +86,12 @@ public class ParsingInfoUtils {
         lxModelInfo.setLxModel(lxModel);
         lxModelInfo.setModelImplInfo(parsingLXModelImplInfo(typeElement));
         try {
+            //Already compiled
             Class aClass = lxModel.networkEngine();
             lxModelInfo.setNetworkEnginePackage(aClass.getCanonicalName());
             lxModelInfo.setNetworkEngineSimpleName(aClass.getSimpleName());
         } catch (MirroredTypeException mte) {
-
+            //Not compiled
             DeclaredType declaredType = (DeclaredType) mte.getTypeMirror();
             TypeElement classTypeElement = (TypeElement) declaredType.asElement();
             lxModelInfo.setNetworkEnginePackage(declaredType.toString());

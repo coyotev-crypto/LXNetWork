@@ -95,6 +95,7 @@ public class ProcessLXModel implements ProcessAnnotation {
             writer = fileObject.openWriter();
             writer.write("package " + packageName + ";\n");
             writer.write("import cc.turbosnail.lrhlibrary.BaseObserver;\n");
+
             if (annotationUtils.getModelImplInfo() != null) {
                 writer.write("import " + annotationUtils.getModelImplInfo().getName() + ";\n");
             }
@@ -196,7 +197,13 @@ public class ProcessLXModel implements ProcessAnnotation {
             if (!methodInfo.getReturnType().equals("void")) {
                 writer.write(";\n");
             } else {
-                writer.write("\n\t\t\t.compose(" + annotationUtils.getNetworkEngineSimpleName() + ".getInstance().applySchedulers(" + variableElements.get(variableElements.size() - 1) + "));\n");
+                writer.write("\n\t\t\t.compose(");
+                if (!annotationUtils.getNetworkEnginePackage().equals("cc.turbosnail.lrhannotation.NetworkEngine")){
+                    writer.write(annotationUtils.getNetworkEngineSimpleName());
+                }else {
+                    writer.write("LrhHttp");
+                }
+                writer.write(".getInstance().applySchedulers(" + variableElements.get(variableElements.size() - 1) + "));\n");
             }
         }
         writer.write("\t}\n");
@@ -210,7 +217,7 @@ public class ProcessLXModel implements ProcessAnnotation {
      * @param lxModelInfo
      */
     private void writerCustomFile(Writer writer, MethodInfo methodInfo, LXModelInfo lxModelInfo) throws IOException {
-        //
+
         if (!methodInfo.getReturnType().equals("void")){
             writer.write("\treturn ");
         }else {
@@ -235,6 +242,7 @@ public class ProcessLXModel implements ProcessAnnotation {
         writer.write(");\n");
 //        writer.write(lxModelInfo.getModelImplInfo().getName());
     }
+
 
     private String returnType(String returnType) {
         String returnValue = "null";

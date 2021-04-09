@@ -33,13 +33,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
     implementation project(':network')
     implementation project(':LXAnnotation')
 
     annotationProcessor project(':LXCompiler')
     implementation project(path: ':LXBind')
-
     //引入Hilt
 //    implementation "com.google.dagger:hilt-android:2.28-alpha"
 //    annotationProcessor "com.google.dagger:hilt-android-compiler:2.28-alpha"

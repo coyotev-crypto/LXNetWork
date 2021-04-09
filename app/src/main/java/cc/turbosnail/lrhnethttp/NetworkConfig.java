@@ -5,7 +5,7 @@ import cc.turbosnail.lrhlibrary.base.INetworkRequiredInfo;
 /**
  * @version V0.1.0
  * @ClassName: NetworkConfig
- * @Description: java类作用描述
+ * @Description: 网络配置是否打印日志
  * @Author: 李儒浩
  * @editor 修改人
  * @Data 2021-1-31 20:01

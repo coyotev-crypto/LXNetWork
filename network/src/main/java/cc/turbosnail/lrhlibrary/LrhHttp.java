@@ -16,6 +16,7 @@ public class LrhHttp extends BaseHttp {
 
 
     private static volatile LrhHttp mInstance;
+
     public static LrhHttp getInstance() {
         if (mInstance == null) {
             synchronized (LrhHttp.class) {

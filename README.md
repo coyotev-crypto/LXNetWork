@@ -1,4 +1,4 @@
 # LXNetWork
 基于OkHttp+Retrofit+RxJava封装的网络框架
 使用简单
-mvp的封装
+示例程序这里我就省略Presenter随便写了一下你可以根据你自己的需求来。

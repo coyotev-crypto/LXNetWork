@@ -168,7 +168,7 @@ public abstract class BaseHttp {
      * @param <T>
      * @return Retrofit
      */
-    public synchronized <T> T getBaseService(Class<T> servlce) {
+    protected synchronized <T> T getBaseService(Class<T> servlce) {
         //先判断BaseUrl是否存在
         if (null == mBaseUrl) {
             if (parsingAnnotation(servlce)) {
