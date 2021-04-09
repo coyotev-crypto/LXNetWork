@@ -3,16 +3,24 @@
 自动Model层生成模板代码
 使用简单
 示例程序这里我就省略Presenter随便写了一下你可以根据你自己的需求来。
-1、初始化网络在Application中添加
+
+1、引入该模块
+
+    implementation 'com.github.lrhcoyote.LXNetWork:network:v1.0.0.4'
+    implementation 'com.github.lrhcoyote.LXNetWork:LXAnnotation:v1.0.0.4'
+    implementation 'com.github.lrhcoyote.LXNetWork:LXBind:v1.0.0.4'
+    annotationProcessor "com.github.lrhcoyote.LXNetWork:LXCompiler:v1.0.0.4"
+
+2、初始化网络在Application中添加
 
 `LrhHttp.init(new NetworkConfig());`
 
-2、创建自己的网络请求接口
+3、创建自己的网络请求接口
 
 添加@BaseUrl或@TestUrl为你请求的路径
 ![测试接口](app/src/main/res/mipmap-mdpi/测试接口.png)
 
-3、model层的定义
+4、model层的定义
 注意：model里面的方法必须在你的网络请求接口中存在
 ![model定义](app/src/main/res/mipmap-mdpi/model定义.png)
 
@@ -30,3 +38,5 @@
 
       @LXModelImpl 自定义实现网络请求方法   LXModelImpl注解
 
+5、使用LXBind.bind方法进行绑定，如下图
+![使用](app/src/main/res/mipmap-mdpi/使用.png)
