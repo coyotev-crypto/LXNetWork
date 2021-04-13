@@ -3,6 +3,7 @@ package cc.turbosnail.compiler.process.impl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,11 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Name;
+import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.JavaFileObject;
 
@@ -45,19 +49,30 @@ public class ProcessLXModel implements ProcessAnnotation {
 
         for (Element element : elementsAnnotatedWith) {
             TypeElement typeElement = (TypeElement) element;
-            //Get current annotation
-            LXModel annotation = typeElement.getAnnotation(LXModel.class);
-
-            String value = annotation.value();
-            if (value.isEmpty()) {
-                throw new NullPointerException("Please add the name of the current Model to LXModel --------------");
-            }
             String packageName = processingEnv.getElementUtils().getPackageOf(typeElement).toString(); //包名
-            String className = annotation.value();
+            String className = getClassName(typeElement);
             mMethodInfoList = ParsingInfoUtils.parsingMethodInfo(typeElement);
             LXModelInfo lxModelInfo = ParsingInfoUtils.parsingLXModelInfo(typeElement);
             createFile(packageName, className, lxModelInfo);
         }
+    }
+
+    /**
+     * Get the class name
+     * @param typeElement
+     */
+    private String getClassName(TypeElement typeElement){
+
+        String className = null;
+        LXModel annotation = typeElement.getAnnotation(LXModel.class);
+        className = annotation.value();
+        if (!className.isEmpty()){
+            return className;
+        }
+
+        className =  typeElement.getEnclosingElement().getSimpleName() + "_" + typeElement.getSimpleName();
+        return className;
+
     }
 
     /**

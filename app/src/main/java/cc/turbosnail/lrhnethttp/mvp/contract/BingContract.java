@@ -26,7 +26,7 @@ public interface BingContract {
      * 注意：model里面定义的必须与BingApi一样
      * 如果存在返回值请勿添加BaseObserver参数
      */
-    @LXModel(value = "BingModel",networkService = BingApi.class)
+    @LXModel(networkService = BingApi.class)
     interface Model {
         void bingIndex(BaseObserver observer);
     }

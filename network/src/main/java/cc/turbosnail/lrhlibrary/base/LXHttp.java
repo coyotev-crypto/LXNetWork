@@ -44,10 +44,10 @@ public class LXHttp extends BaseHttp {
     private static LXHttp lxHttp = new LXHttp();
 
     public static BaseHttp getInstance() {
-        return lxHttp;
-    }
+     return lxHttp;
+     }
 
-    /**
+     /**
      * 绕过https证书验证
      *
      * @param build

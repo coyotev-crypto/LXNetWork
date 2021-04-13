@@ -15,15 +15,26 @@ import cc.turbosnail.lrhannotation.LXModel;
  * @Version: 1.0
  */
 public class LXBind {
-    public static <T> T bind(Class clazz){
+    public static <T> T bind(Class clazz) {
         LXModel annotation = (LXModel) clazz.getAnnotation(LXModel.class);
-        Package aPackage = clazz.getPackage();
-        String modelName = aPackage.getName() + "." + annotation.value();
+        String packageName = clazz.getPackage().getName();
+        String modelName = packageName + "." + annotation.value();
         try {
             Class<?> aClass = Class.forName(modelName);
             return (T) aClass.newInstance();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Class enclosingClass = clazz.getEnclosingClass();
+            String name = enclosingClass.getSimpleName();
+            modelName = packageName + "." + name + "_" + clazz.getSimpleName();
+            try {
+                return (T) Class.forName(modelName).newInstance();
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            } catch (IllegalAccessException ex) {
+                ex.printStackTrace();
+            } catch (InstantiationException ex) {
+                ex.printStackTrace();
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {

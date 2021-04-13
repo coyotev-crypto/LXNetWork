@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.CountDownLatch;
 import cc.turbosnail.LXBind;
 import cc.turbosnail.lrhlibrary.BaseObserver;
+import cc.turbosnail.lrhnethttp.mvp.contract.BingContract;
 import cc.turbosnail.lrhnethttp.mvp.contract.MedicalGuideContract;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -38,10 +39,10 @@ public class NetworkTest {
     public void bingTest(){
         System.out.println("测试开始: ");
         final CountDownLatch latch = new CountDownLatch(1);
-//        BingContract.Model mBindModel = LXBind.bind(BingContract.Model.class);
-        MedicalGuideContract.Model model = LXBind.bind(MedicalGuideContract.Model.class);
+        BingContract.Model mBindModel = LXBind.bind(BingContract.Model.class);
+//        MedicalGuideContract.Model model = LXBind.bind(MedicalGuideContract.Model.class);
         //测试MedicalGuideModel实现的方法
-        model.bingIndex(new BaseObserver<String>() {
+        mBindModel.bingIndex(new BaseObserver<String>() {
             @Override
             public void onSuccess(String str) {
                 System.out.println("onSuccess: " + str);

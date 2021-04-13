@@ -7,10 +7,10 @@
 **1、引入该模块**
 
 ```
-    'com.github.lrhcoyote.LXNetWork:network:v1.0.0.4'
-    implementation 'com.github.lrhcoyote.LXNetWork:LXAnnotation:v1.0.0.4'
-    implementation 'com.github.lrhcoyote.LXNetWork:LXBind:v1.0.0.4'
-    annotationProcessor "com.github.lrhcoyote.LXNetWork:LXCompiler:v1.0.0.4"
+    implementation 'com.github.lrhcoyote.LXNetWork:network:v1.0.0.5'
+    implementation 'com.github.lrhcoyote.LXNetWork:LXAnnotation:v1.0.0.5'
+    implementation 'com.github.lrhcoyote.LXNetWork:LXBind:v1.0.0.5'
+    annotationProcessor "com.github.lrhcoyote.LXNetWork:LXCompiler:v1.0.0.5"
 ```
 
 **2、初始化网络在Application中添加**
@@ -51,14 +51,20 @@ public interface MedicalGuideApi {
     @GET("guide/v2/{id}")
     Observable<String> getGuideDetDetails(@Path("id") Integer id);
 }
+
+@BaseUrl("https://cn.bing.com/")
+public interface BingApi {
+    @GET("search?form=MOZLBR&pc=MOZI&q=api")
+    Observable<String> bingIndex();
+}
 ```
 
 **4、model层的定义**
 注意：model里面的方法必须在你的网络请求接口中存在
 
 ```
-@LXModel(value = "MedicalGuideModel", networkEngine = MedicalGuideNetwork.class, networkService = MedicalGuideApi.class)
- @LXModelImpl(MedicalGuideModel.class) //被忽略的实现
+ @LXModel(value = "MedicalGuideModel", networkEngine = MedicalGuideNetwork.class, networkService = MedicalGuideApi.class)
+ @LXModelImpl(MedicalGuideModel.class) // MedicalGuideModel 实现被@Ignore忽略的方法
  interface Model {
  
    void getGuideListByCategoryId(RequestBody requestBody, BaseObserver baseObserver);
@@ -68,15 +74,20 @@ public interface MedicalGuideApi {
    @Ignore
    void bingIndex(BaseObserver observer);
  }
+ 
+ 
+ @LXModel(networkService = BingApi.class)
+ interface Model {
+   void bingIndex(BaseObserver observer);
+ }
 ```
-**注意：如果方法不存在MedicalGuideApi中请添加@Ignore注解。如果你必须要这个方法你可以添加@LXModelImpl注解去实现被@Ignore注解忽略的实现，！！！！添加实现的类不能与接口定义在一个包内，见下图**
-![image](app/src/main/res/mipmap-mdpi/image.png)
+**注意：如果方法不存在MedicalGuideApi中请添加@Ignore注解。如果你必须要这个方法你可以添加@LXModelImpl注解去实现被@Ignore注解忽略的实现**
 
 **自定义Model实现如下：**
 
 ```
 public class MedicalGuideModel {
-    //添加@Ignore忽略的实现
+    //实现被@Ignore注解忽略的方法
     public void bingIndex(BaseObserver baseObserver){
         LXHttp.getInstance().createService(BingApi.class)
                 .bingIndex()
@@ -84,13 +95,17 @@ public class MedicalGuideModel {
     }
 }
 ```
-**说明：@LXModel 用于生成模板代码
-      value 生成代码的名称
-      networkEngine 用于发起网络请求的类 必须继承LXHttp或继承BaseHttp，还可以实现INetWorkRequest接口。
-      networkService 网络请求接口
-      @LXModelImpl 自定义实现网络请求方法   LXModelImpl注解**
 
-如果你不满意想自己封装网络库也是可以的，必须继承LXHttp，BaseHttp或实现INetWorkRequest接口，以上实现你都必须有一个getInstance()方法，返回当前实现的单例。
+|LXModel|说明|
+|:---:|:---:|
+|value|生成代码的名称（可忽略）|
+|networkEngine|用于发起网络请求的类（可忽略）|
+|networkService|网络请求接口|
+
+|LXModelImpl|自定义实现网络请求方法|
+
+
+如果你不满意想自己封装网络库也是可以的，必须继承LXHttp，BaseHttp或实现INetWorkRequest接口，以上实现你都必须有一个getInstance()方法，返回当前实现的单例。  
 比如：
 ```
 public class TestNetWork extends BaseHttp {
@@ -127,7 +142,36 @@ public class TestNetWork extends BaseHttp {
     }
 }
 ```
-**5、使用LXBind.bind方法进行绑定，如下图**
-![使用](app/src/main/res/mipmap-mdpi/employ.png)
+**5、使用LXBind.bind方法进行绑定:**
+```
+    @Test
+    public void bingTest(){
+        System.out.println("测试开始: ");
+        final CountDownLatch latch = new CountDownLatch(1);
+        BingContract.Model mBindModel = LXBind.bind(BingContract.Model.class);
+//        MedicalGuideContract.Model model = LXBind.bind(MedicalGuideContract.Model.class);
+        //测试MedicalGuideModel实现的方法
+        mBindModel.bingIndex(new BaseObserver<String>() {
+            @Override
+            public void onSuccess(String str) {
+                System.out.println("onSuccess: " + str);
+                latch.countDown();
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                System.out.println("onFailure: " + e.getMessage());
+                latch.countDown();
+            }
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("测试结束: " + Thread.currentThread());
+    }
+```
 
 联系作者：QQ  758648178
