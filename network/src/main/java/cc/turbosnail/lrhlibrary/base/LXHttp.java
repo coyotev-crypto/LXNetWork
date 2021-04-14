@@ -1,6 +1,7 @@
 package cc.turbosnail.lrhlibrary.base;
 
 import com.google.gson.GsonBuilder;
+
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -9,11 +10,15 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import cc.turbosnail.lrhlibrary.factory.adapter.MyTypeAdapterFactory;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.Observer;
 import io.reactivex.functions.Function;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -39,15 +44,14 @@ public class LXHttp extends BaseHttp {
 
     private OkHttpClient mOkHttpClient;
     private static HashMap<String, Retrofit> retroFitHashMap = new HashMap<>();  //Retrofit对象管理
-    public static boolean isNeiWaiNetWork = false;  //true 为内网 false为外网
 
     private static LXHttp lxHttp = new LXHttp();
 
     public static BaseHttp getInstance() {
-     return lxHttp;
-     }
+        return lxHttp;
+    }
 
-     /**
+    /**
      * 绕过https证书验证
      *
      * @param build
@@ -119,8 +123,7 @@ public class LXHttp extends BaseHttp {
                     httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
                     builder.addInterceptor(httpLoggingInterceptor);
                 }
-//                builder.addInterceptor(new CommonHeaderInterceptor()) //添加请求头
-//                builder.addInterceptor(new CommonResponseIntercept()) //
+
                 //内网绕过https
                 if (isNeiWaiNetWork) {
                     builder = bypassHttps(builder);
@@ -130,6 +133,7 @@ public class LXHttp extends BaseHttp {
         }
         return mOkHttpClient;
     }
+
 
     @Override
     public Interceptor[] createInterceptors() {

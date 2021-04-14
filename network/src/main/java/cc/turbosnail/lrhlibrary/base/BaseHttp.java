@@ -39,8 +39,11 @@ public abstract class BaseHttp implements INetWorkRequest {
             public ObservableSource<T> apply(Observable<T> upstream) {
                 upstream.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .onErrorResumeNext(tHttpErrorHandler)
-                        .subscribe(observer);
+                        .onErrorResumeNext(tHttpErrorHandler);
+                if (createAppErrorHandler() != null){
+                    upstream.map(createAppErrorHandler());
+                }
+                upstream.subscribe(observer);
                 return upstream;
             }
         };
