@@ -173,5 +173,43 @@ public class TestNetWork extends BaseHttp {
         System.out.println("测试结束: " + Thread.currentThread());
     }
 ```
+混淆规则
+```
+#okhttp3.x
+-dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.** { *;}
+-dontwarn okio.**
+-dontwarn com.squareup.okhttp.**
+-keep class com.squareup.okhttp.{*;}
+-dontwarn javax.annotation.**
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+-dontwarn org.codehaus.mojo.animal_sniffer.*
+-dontwarn okhttp3.internal.platform.ConscryptPlatform
 
+#retrofit
+-dontwarn retrofit.**
+-keep class retrofit.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+-dontwarn okio.**
+
+#Rxjava RxAndroid
+-dontwarn rx.*
+-dontwarn sun.misc.**
+
+#Gson
+-keep class com.google.gson.** {*;}
+-keep class com.google.**{*;}
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+-keep class com.google.gson.examples.android.model.** { *; }
+
+-keep class cc.turbosnail.**{*;}
+-keepclasseswithmembernames class * {
+    @cc.turbosnail.lrhannotation.* <fields>;
+}
+-keepclasseswithmembernames class * {
+    @cc.turbosnail.lrhannotation.* <methods>;
+}
+```
 联系作者：QQ  758648178

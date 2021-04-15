@@ -18,9 +18,10 @@ import cc.turbosnail.lrhnethttp.api.BingApi;
  */
 public class MedicalGuideModel {
     //添加@Ignore忽略的实现
-    public void bingIndex(BaseObserver baseObserver){
+    public int bingIndex(BaseObserver baseObserver){
         LXHttp.getInstance().createService(BingApi.class)
                 .bingIndex()
                 .compose(LXHttp.getInstance().applySchedulers(baseObserver));
+        return 1;
     }
 }

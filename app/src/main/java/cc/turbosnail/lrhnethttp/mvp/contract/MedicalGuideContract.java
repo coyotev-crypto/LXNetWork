@@ -25,7 +25,7 @@ import okhttp3.RequestBody;
 public interface MedicalGuideContract {
 
 
-    @LXModel(value = "MedicalGuideModel", networkEngine = MedicalGuideNetwork.class, networkService = MedicalGuideApi.class)
+    @LXModel(networkEngine = MedicalGuideNetwork.class, networkService = MedicalGuideApi.class)
     @LXModelImpl(MedicalGuideModel.class) //被忽略的实现
     interface Model {
 
@@ -35,7 +35,7 @@ public interface MedicalGuideContract {
 
         //如果你这个请求不是使用MedicalGuideNetwork发起的请求或者想自己实现请添加@Ignore注解
         @Ignore
-        void bingIndex(BaseObserver observer);
+        int bingIndex(BaseObserver observer);
     }
 
     interface View {

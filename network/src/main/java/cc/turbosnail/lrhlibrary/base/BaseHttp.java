@@ -8,6 +8,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -24,6 +25,7 @@ public abstract class BaseHttp implements INetWorkRequest {
     protected String mBaseUrl = null;
     public static boolean isNeiWaiNetWork = false;  //true 为内网 false为外网
     protected HttpErrorHandler tHttpErrorHandler = new HttpErrorHandler<>();
+
     /***
      *  启动应用就初始化
      * @param iNetworkRequiredInf
@@ -37,14 +39,14 @@ public abstract class BaseHttp implements INetWorkRequest {
         return new ObservableTransformer<T, T>() {
             @Override
             public ObservableSource<T> apply(Observable<T> upstream) {
-                upstream.subscribeOn(Schedulers.io())
+                Observable observable = upstream.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .onErrorResumeNext(tHttpErrorHandler);
                 if (createAppErrorHandler() != null){
-                    upstream.map(createAppErrorHandler());
+                    observable.map(createAppErrorHandler());
                 }
-                upstream.subscribe(observer);
-                return upstream;
+                observable.subscribe(observer);
+                return observable;
             }
         };
     }
@@ -52,20 +54,20 @@ public abstract class BaseHttp implements INetWorkRequest {
 
     @Override
     public <T> T createService(Class<T> service) {
-            //先判断BaseUrl是否存在
-            if (null == mBaseUrl) {
-                if (parsingAnnotation(service)) {
-                    //如果不存在那就查找父类是否存在该注解
-                    parsingInterfacesAnnotation(service);
-                }
+        //先判断BaseUrl是否存在
+        if (null == mBaseUrl) {
+            if (parsingAnnotation(service)) {
+                //如果不存在那就查找父类是否存在该注解
+                parsingInterfacesAnnotation(service);
             }
-            //初始化请求对象
-            if (mBaseUrl == null) {
-                throw new NullPointerException("BaseUrl is null, the solution is to add @BaseUrl or @TestUrl to the class");
-            }
+        }
+        //初始化请求对象
+        if (mBaseUrl == null) {
+            throw new NullPointerException("BaseUrl is null, the solution is to add @BaseUrl or @TestUrl to the class");
+        }
 
-            isNeiWaiNetWork = mBaseUrl.contains("192.168.");  //内网
-            return createRetrofit(service).create(service);
+        isNeiWaiNetWork = mBaseUrl.contains("192.168.");  //内网
+        return createRetrofit(service).create(service);
     }
 
     /**
