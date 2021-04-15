@@ -70,7 +70,7 @@ public class ProcessLXModel implements ProcessAnnotation {
             return className;
         }
 
-        className =  typeElement.getEnclosingElement().getSimpleName() + "_" + typeElement.getSimpleName();
+        className =  typeElement.getEnclosingElement().getSimpleName().toString() + typeElement.getSimpleName().toString() + "_BindModel";
         return className;
 
     }

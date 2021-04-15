@@ -169,6 +169,7 @@
 -keep class com.google.gson.examples.android.model.** { *; }
 
 -keep class cc.turbosnail.**{*;}
+-keep class **$$BindModel { *; }
 -keepclasseswithmembernames class * {
     @cc.turbosnail.lrhannotation.* <fields>;
 }

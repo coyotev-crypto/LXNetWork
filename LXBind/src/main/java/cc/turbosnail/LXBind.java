@@ -25,7 +25,7 @@ public class LXBind {
         } catch (ClassNotFoundException e) {
             Class enclosingClass = clazz.getEnclosingClass();
             String name = enclosingClass.getSimpleName();
-            modelName = packageName + "." + name + "_" + clazz.getSimpleName();
+            modelName = packageName + "." + name + clazz.getSimpleName() + "_BindModel";
             try {
                 return (T) Class.forName(modelName).newInstance();
             } catch (ClassNotFoundException ex) {
