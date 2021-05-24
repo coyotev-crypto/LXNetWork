@@ -1,7 +1,7 @@
 package cc.turbosnail.lrhnethttp.mvp.model;
 
 import cc.turbosnail.lrhlibrary.BaseObserver;
-import cc.turbosnail.lrhlibrary.base.LXHttp;
+import cc.turbosnail.lrhlibrary.net.LXHttp;
 import cc.turbosnail.lrhnethttp.api.BingApi;
 
 /**

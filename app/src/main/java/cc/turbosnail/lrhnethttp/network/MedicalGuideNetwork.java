@@ -1,6 +1,8 @@
 package cc.turbosnail.lrhnethttp.network;
 
-import cc.turbosnail.lrhlibrary.base.LXHttp;
+import cc.turbosnail.lrhlibrary.netinterface.AppHandlerInterface;
+import cc.turbosnail.lrhlibrary.netinterface.ServiceInterface;
+import cc.turbosnail.lrhlibrary.net.HttpClient;
 import cc.turbosnail.lrhnethttp.network.interceptor.MedicalGuideInterceptor;
 import io.reactivex.functions.Function;
 import okhttp3.Interceptor;
@@ -17,17 +19,21 @@ import okhttp3.Interceptor;
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */
-public class MedicalGuideNetwork extends LXHttp {
+public class MedicalGuideNetwork{
 
-    private static final MedicalGuideNetwork appNetWorkApi = new MedicalGuideNetwork();
+    public static ServiceInterface getInstance() {
+        return HttpClient.Builder()
+                .setAppHandlerInterface(new AppHandlerInterface() {
+                    @Override
+                    public Interceptor[] createInterceptors() {
+                        return new Interceptor[]{new MedicalGuideInterceptor()};
+                    }
 
-    public static MedicalGuideNetwork getInstance() {
-        return appNetWorkApi;
+                    @Override
+                    public <T> Function<T, T> createAppErrorHandler() {
+                        return null;
+                    }
+                })
+                .builder();
     }
-
-    @Override
-    public Interceptor[] createInterceptors() {
-        return new Interceptor[]{new MedicalGuideInterceptor()};
-    }
-
 }

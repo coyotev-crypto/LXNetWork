@@ -118,7 +118,7 @@ public class ProcessLXModel implements ProcessAnnotation {
             if (!annotationUtils.getNetworkEnginePackage().equals("cc.turbosnail.lrhannotation.NetworkEngine")) {
                 writer.write("import " + annotationUtils.getNetworkEnginePackage() + ";\n");
             } else {
-                writer.write("import cc.turbosnail.lrhlibrary.base.LXHttp;\n");
+                writer.write("import cc.turbosnail.lrhlibrary.net.LXHttp;\n");
             }
             if (annotationUtils.getNetworkServicePackage() != null) {
                 writer.write("import " + annotationUtils.getNetworkServicePackage() + ";\n");

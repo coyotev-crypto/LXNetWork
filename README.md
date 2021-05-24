@@ -2,9 +2,8 @@
 基于OkHttp+Retrofit+RxJava封装的网络框架
 自动Model层生成模板代码
 使用简单
-示例程序这里我就省略Presenter随便写了一下你可以根据你自己的需求来。
 
-**1、引入该模块**
+**1、引入该模块 请引入最新的版本**
 
 ```
     implementation 'com.github.lrhcoyote.LXNetWork:network:v1.0.0.5'
@@ -15,28 +14,9 @@
 
 **2、初始化网络在Application中添加**
 
-`LXHttp.init(new NetworkConfig());`
+`HttpClient.init(false);`
 
 
-```
-public class NetworkConfig implements INetworkRequiredInfo {
-    @Override
-    public String getAppVersionName() {
-        return BuildConfig.VERSION_NAME;
-    }
-
-    @Override
-    public String getAppVersionCode() {
-        return String.valueOf(BuildConfig.VERSION_CODE);
-    }
-    
-    //是否打印日志
-    @Override
-    public boolean isDebug() {
-        return BuildConfig.DEBUG;
-    }
-}
-```
 **3、创建自己的网络请求接口**
 
 添加@BaseUrl或@TestUrl为你请求的路径
@@ -105,42 +85,50 @@ public class MedicalGuideModel {
 |LXModelImpl|自定义实现网络请求方法|
 
 
-如果你不满意想自己封装网络库也是可以的，必须继承LXHttp，BaseHttp或实现INetWorkRequest接口，以上实现你都必须有一个getInstance()方法，返回当前实现的单例。  
-比如：
+如果你不满意想自己封装网络库也是可以的 ,有一下两种方式（getInstance()方法必须存在并且是静态方法）
+
 ```
-public class TestNetWork extends BaseHttp {
+第一种 先获取到HttpClient 对象在根据自己的需要去进行构建新的请求对象
+public class LXHttp {
+    private static HttpClient httpClient = HttpClient.getInstance();
+    public static HttpClient getInstance() {
+        return httpClient
+                .newBuilder()
+                .setAppHandlerInterface(new AppHandlerInterface() {
+                    @Override
+                    public Interceptor[] createInterceptors() {
+                        return new Interceptor[0];
+                    }
 
-    private static TestNetWork testHttp = new TestNetWork();
-
-    public static TestNetWork getInstance(){
-        return testHttp;
+                    @Override
+                    public <T> Function<T, T> createAppErrorHandler() {
+                        return null;
+                    }
+                }).builder();
     }
 
-    @Override
-    public Retrofit createRetrofit(Class service) {
-        return null;
-    }
+}
 
-    @Override
-    public OkHttpClient createOkHttpClient() {
-        return null;
-    }
-    
-    @Override
-    public Interceptor createInterceptor() {
-        return null;
-    }
+第二种 直接通过HttpClient.Builder()去构建新的请求对象
+public class MedicalGuideNetwork{
 
-    @Override
-    public <T> Function<T, T> createAppErrorHandler() {
-        return null;
-    }
-    //内网https绕过可能需要得到
-    @Override
-    public OkHttpClient.Builder bypassHttps(OkHttpClient.Builder build) {
-        return null;
+    public static ServiceInterface getInstance() {
+        return HttpClient.Builder()
+                .setAppHandlerInterface(new AppHandlerInterface() {
+                    @Override
+                    public Interceptor[] createInterceptors() {
+                        return new Interceptor[]{new MedicalGuideInterceptor()};
+                    }
+
+                    @Override
+                    public <T> Function<T, T> createAppErrorHandler() {
+                        return null;
+                    }
+                })
+                .builder();
     }
 }
+
 ```
 **5、使用LXBind.bind方法进行绑定:**
 ```

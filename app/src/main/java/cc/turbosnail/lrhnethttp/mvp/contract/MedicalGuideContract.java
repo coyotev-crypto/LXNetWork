@@ -4,9 +4,9 @@ import cc.turbosnail.lrhannotation.Ignore;
 import cc.turbosnail.lrhannotation.LXModel;
 import cc.turbosnail.lrhannotation.LXModelImpl;
 import cc.turbosnail.lrhlibrary.BaseObserver;
+import cc.turbosnail.lrhlibrary.net.HttpClient;
 import cc.turbosnail.lrhnethttp.api.MedicalGuideApi;
 import cc.turbosnail.lrhnethttp.mvp.model.MedicalGuideModel;
-import cc.turbosnail.lrhnethttp.network.MedicalGuideNetwork;
 import io.reactivex.Observable;
 import okhttp3.RequestBody;
 
@@ -25,7 +25,7 @@ import okhttp3.RequestBody;
 public interface MedicalGuideContract {
 
 
-    @LXModel(networkEngine = MedicalGuideNetwork.class, networkService = MedicalGuideApi.class)
+    @LXModel(networkEngine = HttpClient.class, networkService = MedicalGuideApi.class)
     @LXModelImpl(MedicalGuideModel.class) //被忽略的实现
     interface Model {
 

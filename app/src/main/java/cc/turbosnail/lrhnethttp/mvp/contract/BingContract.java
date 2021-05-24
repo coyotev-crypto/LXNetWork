@@ -3,7 +3,6 @@ package cc.turbosnail.lrhnethttp.mvp.contract;
 import cc.turbosnail.lrhannotation.LXModel;
 import cc.turbosnail.lrhlibrary.BaseObserver;
 import cc.turbosnail.lrhnethttp.api.BingApi;
-import io.reactivex.Observable;
 
 /**
  * @ProjectName: LXNetHttp
