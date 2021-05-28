@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import java.util.HashMap;
 import cc.turbosnail.lrhlibrary.factory.adapter.MyTypeAdapterFactory;
 import cc.turbosnail.lrhlibrary.netinterface.OkHttpClientInterface;
-import cc.turbosnail.lrhlibrary.netinterface.ParsingAnnotationInterface;
+import cc.turbosnail.lrhlibrary.netinterface.abstracts.ParsingAnnotationAbstract;
 import cc.turbosnail.lrhlibrary.netinterface.RetrofitInterface;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -20,10 +20,10 @@ public class RetrofitInterfaceImpl implements RetrofitInterface {
      * 构建OkHttp对象的
      */
     protected OkHttpClientInterface mOkHttpClient;
-    protected ParsingAnnotationInterface mParsingAnnotationInterface;
+    protected ParsingAnnotationAbstract mParsingAnnotationInterface;
 
     private static HashMap<String, Retrofit> retroFitHashMap = new HashMap<>();  //Retrofit对象管理
-    public RetrofitInterfaceImpl(OkHttpClientInterface mOkHttpClient, ParsingAnnotationInterface parsingAnnotationInterface) {
+    public RetrofitInterfaceImpl(OkHttpClientInterface mOkHttpClient, ParsingAnnotationAbstract parsingAnnotationInterface) {
         this.mOkHttpClient = mOkHttpClient;
         this.mParsingAnnotationInterface = parsingAnnotationInterface;
     }

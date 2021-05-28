@@ -11,8 +11,15 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.CountDownLatch;
 import cc.turbosnail.LXBind;
 import cc.turbosnail.lrhlibrary.BaseObserver;
+import cc.turbosnail.lrhlibrary.net.HttpClient;
+import cc.turbosnail.lrhnethttp.api.BingApi;
 import cc.turbosnail.lrhnethttp.mvp.contract.BingContract;
 import cc.turbosnail.lrhnethttp.mvp.contract.MedicalGuideContract;
+import cc.turbosnail.lrhnethttp.network.MedicalGuideAppHandler;
+import cc.turbosnail.lrhnethttp.network.MedicalGuideNetwork;
+import cc.turbosnail.lrhnethttp.network.TestNetWorkAdapter;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -39,22 +46,49 @@ public class NetworkTest {
     public void bingTest(){
         System.out.println("测试开始: ");
         final CountDownLatch latch = new CountDownLatch(1);
-        BingContract.Model mBindModel = LXBind.bind(BingContract.Model.class);
-//        MedicalGuideContract.Model model = LXBind.bind(MedicalGuideContract.Model.class);
-        //测试MedicalGuideModel实现的方法
-        mBindModel.bingIndex(new BaseObserver<String>() {
-            @Override
-            public void onSuccess(String str) {
-                System.out.println("onSuccess: " + str);
-                latch.countDown();
-            }
+        HttpClient httpClient = new HttpClient();
+        httpClient.setAdapter(new TestNetWorkAdapter());
+        httpClient.createService(BingApi.class)
+                .bingIndex()
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            @Override
-            public void onFailure(Throwable e) {
-                System.out.println("onFailure: " + e.getMessage());
-                latch.countDown();
-            }
-        });
+                    }
+
+                    @Override
+                    public void onNext(String str) {
+                        System.out.println("onSuccess: " + str);
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        System.out.println("onSuccess: " + e.getMessage());
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+//        BingContract.Model mBindModel = LXBind.bind(BingContract.Model.class);
+////        MedicalGuideContract.Model model = LXBind.bind(MedicalGuideContract.Model.class);
+//        //测试MedicalGuideModel实现的方法
+//        mBindModel.bingIndex(new BaseObserver<String>() {
+//            @Override
+//            public void onSuccess(String str) {
+//                System.out.println("onSuccess: " + str);
+//                latch.countDown();
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable e) {
+//                System.out.println("onFailure: " + e.getMessage());
+//                latch.countDown();
+//            }
+//        });
 
         try {
             latch.await();

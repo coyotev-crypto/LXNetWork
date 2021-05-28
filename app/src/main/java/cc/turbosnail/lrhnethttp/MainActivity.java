@@ -3,6 +3,7 @@ package cc.turbosnail.lrhnethttp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,5 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 viewById.setText(e.getMessage());
             }
         });
+        startActivity(new Intent(this,Main2Activity.class));
+        finish();
     }
 }

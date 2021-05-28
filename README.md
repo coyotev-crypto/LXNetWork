@@ -85,29 +85,22 @@ public class MedicalGuideModel {
 |LXModelImpl|自定义实现网络请求方法|
 
 
-如果你不满意想自己封装网络库也是可以的 ,有一下两种方式（getInstance()方法必须存在并且是静态方法）
+如果你不满意想自己封装网络库也是可以的 ,有一下两种方式（getInstance()方法必须存在并且是静态方法）推荐使用第一种
 
 ```
 第一种 先获取到HttpClient 对象在根据自己的需要去进行构建新的请求对象
-public class LXHttp {
-    private static HttpClient httpClient = HttpClient.getInstance();
+public class MedicalGuideNetwork {
+
+    private static HttpClient mHttpClient = new HttpClient();
+
     public static HttpClient getInstance() {
-        return httpClient
+        return mHttpClient
                 .newBuilder()
-                .setAppHandlerInterface(new AppHandlerInterface() {
-                    @Override
-                    public Interceptor[] createInterceptors() {
-                        return new Interceptor[0];
-                    }
-
-                    @Override
-                    public <T> Function<T, T> createAppErrorHandler() {
-                        return null;
-                    }
-                }).builder();
+                .setAppHandlerInterface(new MedicalGuideAppHandler())
+                .builder();
     }
-
 }
+
 
 第二种 直接通过HttpClient.Builder()去构建新的请求对象
 public class MedicalGuideNetwork{

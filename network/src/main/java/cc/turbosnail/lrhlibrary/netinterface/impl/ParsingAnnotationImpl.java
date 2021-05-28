@@ -2,9 +2,9 @@ package cc.turbosnail.lrhlibrary.netinterface.impl;
 
 import cc.turbosnail.lrhlibrary.annotation.BaseUrl;
 import cc.turbosnail.lrhlibrary.annotation.TestUrl;
-import cc.turbosnail.lrhlibrary.netinterface.ParsingAnnotationInterface;
+import cc.turbosnail.lrhlibrary.netinterface.abstracts.ParsingAnnotationAbstract;
 
-public class ParsingAnnotationImpl extends ParsingAnnotationInterface {
+public class ParsingAnnotationImpl extends ParsingAnnotationAbstract {
     public ParsingAnnotationImpl() {
     }
 

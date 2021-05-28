@@ -1,14 +1,14 @@
 package cc.turbosnail.lrhlibrary.net;
 
-import android.util.Log;
-
+import cc.turbosnail.lrhlibrary.adapter.Adapter;
+import cc.turbosnail.lrhlibrary.adapter.NetworkAdapter;
 import cc.turbosnail.lrhlibrary.netinterface.AppHandlerInterface;
 import cc.turbosnail.lrhlibrary.netinterface.IntranetBypassInterface;
 import cc.turbosnail.lrhlibrary.netinterface.OkHttpClientInterface;
-import cc.turbosnail.lrhlibrary.netinterface.ParsingAnnotationInterface;
+import cc.turbosnail.lrhlibrary.netinterface.abstracts.ParsingAnnotationAbstract;
 import cc.turbosnail.lrhlibrary.netinterface.RetrofitInterface;
 import cc.turbosnail.lrhlibrary.netinterface.ServiceInterface;
-import cc.turbosnail.lrhlibrary.netinterface.ThreadSwitchingInterface;
+import cc.turbosnail.lrhlibrary.netinterface.abstracts.ThreadSwitchingAbstract;
 import cc.turbosnail.lrhlibrary.netinterface.impl.AppHandlerInterfaceImpl;
 import cc.turbosnail.lrhlibrary.netinterface.impl.IntranetBypassImpl;
 import cc.turbosnail.lrhlibrary.netinterface.impl.OkHttpClientImpl;
@@ -18,47 +18,43 @@ import cc.turbosnail.lrhlibrary.netinterface.impl.ThreadSwitchingImpl;
 import cc.turbosnail.lrhlibrary.netinterface.impl.VariableConfig;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 
 /**
  * 接口集成
  */
 public class HttpClient implements ServiceInterface {
-    private static HttpClient mHttpClient;
+
     private AppHandlerInterface mAppHandlerInterface;  //应用错误处理接口
     private IntranetBypassInterface mIntranetBypassInterface;  //内网https证书绕过
     private OkHttpClientInterface mHttpClientInterface;  //OkHttpClient对象创建
     private RetrofitInterface mRetrofitInterface; //Retrofit对象创建
-    private ThreadSwitchingInterface mSwitchingInterface; //线程切换
-    private ParsingAnnotationInterface mParsingAnnotationInterface; //注解解析
+    private ThreadSwitchingAbstract mSwitchingInterface; //线程切换
+    private ParsingAnnotationAbstract mParsingAnnotationInterface; //注解解析
+    private NetworkAdapter mAdapter; //适配器
 
-    public static HttpClient getInstance() {
-        if (mHttpClient == null) {
-            mHttpClient = new HttpClient();
-        }
-        return mHttpClient;
+    public void setAdapter(NetworkAdapter mAdapter) {
+        this.mAdapter = mAdapter;
     }
 
     /**
      * 默认构造方法使用内置的配置
      */
-    private HttpClient() {
-        mAppHandlerInterface = new AppHandlerInterfaceImpl();
-        mIntranetBypassInterface = new IntranetBypassImpl();
-        mHttpClientInterface = new OkHttpClientImpl();
-        mParsingAnnotationInterface = new ParsingAnnotationImpl();
-        initHttpClient();
-        mSwitchingInterface = new ThreadSwitchingImpl(mAppHandlerInterface);
+    public HttpClient() {
+        this.mAppHandlerInterface = new AppHandlerInterfaceImpl();
+        this.mIntranetBypassInterface = new IntranetBypassImpl();
+        this.mHttpClientInterface = new OkHttpClientImpl(mAppHandlerInterface, mIntranetBypassInterface);
+        this.mParsingAnnotationInterface = new ParsingAnnotationImpl();
+        this.mSwitchingInterface = new ThreadSwitchingImpl(mAppHandlerInterface);
     }
 
     public HttpClient(Builder builder) {
-        mAppHandlerInterface = builder.mAppHandlerInterface;
-        mIntranetBypassInterface = builder.mIntranetBypassInterface;
-        mHttpClientInterface = builder.mHttpClientInterface;
-        mParsingAnnotationInterface = builder.mParsingAnnotationInterface;
-        initHttpClient();
-        mSwitchingInterface = builder.mSwitchingInterface;
+        this.mAppHandlerInterface = builder.mAppHandlerInterface;
+        this.mIntranetBypassInterface = builder.mIntranetBypassInterface;
+        this.mHttpClientInterface = builder.mHttpClientInterface;
+        this.mHttpClientInterface.setAppHandlerInterface(mAppHandlerInterface);
+        this.mHttpClientInterface.setIntranetBypassInterface(mIntranetBypassInterface);
+        this.mParsingAnnotationInterface = builder.mParsingAnnotationInterface;
+        this.mSwitchingInterface = builder.mSwitchingInterface;
     }
 
     private static final String TAG = "HttpClient";
@@ -76,40 +72,45 @@ public class HttpClient implements ServiceInterface {
         VariableConfig.isDebug = isDebug;
     }
 
-    /***
-     * 初始化okhttp对象
+    /**
+     * 创建服务
+     *
+     * @param service
+     * @param <T>
+     * @return
      */
-    private void initHttpClient() {
-        OkHttpClient.Builder builder = mHttpClientInterface.createOkHttpClient().newBuilder();
-        if (mAppHandlerInterface != null && mAppHandlerInterface.createInterceptors() != null) {
-            for (Interceptor interceptor : mAppHandlerInterface.createInterceptors()) {
-                builder.addInterceptor(interceptor);
-            }
-        }
-        //内网绕过https
-        if (VariableConfig.isNeiWaiNetWork || mIntranetBypassInterface != null) {
-            mIntranetBypassInterface.bypassHttps(builder);
-        }
-    }
-
     @Override
     public <T> T createService(Class<T> service) {
-        mParsingAnnotationInterface.parsing(service);
-
-        VariableConfig.isNeiWaiNetWork = mParsingAnnotationInterface.url.contains("192.168.");  //内网
-        if (mRetrofitInterface == null) {
-            mRetrofitInterface = new RetrofitInterfaceImpl(mHttpClientInterface, mParsingAnnotationInterface);
+        if (mAdapter != null) {
+            mAdapter.parsingAnnotation.parsing(service);
+            VariableConfig.isNeiWaiNetWork = mAdapter.parsingAnnotation.url.contains("192.168.");
+            if (this.mRetrofitInterface == null) {
+                return mAdapter.createRetrofit(service).create(service);
+            }
+        } else {
+            mParsingAnnotationInterface.parsing(service);
+            VariableConfig.isNeiWaiNetWork = mParsingAnnotationInterface.url.contains("192.168.");  //内网
+            if (this.mRetrofitInterface == null) {
+                this.mRetrofitInterface = new RetrofitInterfaceImpl(mHttpClientInterface, mParsingAnnotationInterface);
+            }
         }
-        return mRetrofitInterface.createRetrofit(service).create(service);
+        return this.mRetrofitInterface.createRetrofit(service).create(service);
     }
 
     @Override
     public <T> ObservableTransformer<T, T> applySchedulers(Observer<T> observer) {
+        if (mAdapter != null){
+            return mAdapter.applySchedulers(observer);
+        }
         return mSwitchingInterface.applySchedulers(observer);
     }
 
     @Override
     public void cancelRequest(Observer... observer) {
+        if (mAdapter != null){
+            mAdapter.cancelRequest(observer);
+            return;
+        }
         mSwitchingInterface.cancelRequest(observer);
     }
 
@@ -118,17 +119,18 @@ public class HttpClient implements ServiceInterface {
      *
      * @return Builder 对象
      */
-    public static Builder Builder() {
+    public Builder Builder() {
         return new Builder();
     }
 
-    public static class Builder {
+
+    public class Builder {
         private AppHandlerInterface mAppHandlerInterface;  //应用错误处理接口
         private IntranetBypassInterface mIntranetBypassInterface;  //内网https证书绕过
         private OkHttpClientInterface mHttpClientInterface;  //OkHttpClient对象创建
         private RetrofitInterface mRetrofitInterface; //Retrofit对象创建
-        private ThreadSwitchingInterface mSwitchingInterface; //线程切换
-        private ParsingAnnotationInterface mParsingAnnotationInterface; //注解解析
+        private ThreadSwitchingAbstract mSwitchingInterface; //线程切换
+        private ParsingAnnotationAbstract mParsingAnnotationInterface; //注解解析
 
         public Builder(HttpClient httpClient) {
             this.mAppHandlerInterface = httpClient.mAppHandlerInterface;
@@ -162,12 +164,12 @@ public class HttpClient implements ServiceInterface {
             return this;
         }
 
-        public Builder setSwitchingInterface(ThreadSwitchingInterface mSwitchingInterface) {
+        public Builder setSwitchingInterface(ThreadSwitchingAbstract mSwitchingInterface) {
             this.mSwitchingInterface = mSwitchingInterface;
             return this;
         }
 
-        public Builder setParsingAnnotationInterface(ParsingAnnotationInterface mParsingAnnotationInterface) {
+        public Builder setParsingAnnotationInterface(ParsingAnnotationAbstract mParsingAnnotationInterface) {
             this.mParsingAnnotationInterface = mParsingAnnotationInterface;
             return this;
         }
@@ -175,5 +177,6 @@ public class HttpClient implements ServiceInterface {
         public HttpClient builder() {
             return new HttpClient(this);
         }
+
     }
 }

@@ -3,6 +3,7 @@ package cc.turbosnail.lrhnethttp.mvp.contract;
 import cc.turbosnail.lrhannotation.LXModel;
 import cc.turbosnail.lrhlibrary.BaseObserver;
 import cc.turbosnail.lrhnethttp.api.BingApi;
+import cc.turbosnail.lrhnethttp.network.MedicalGuideNetwork;
 
 /**
  * @ProjectName: LXNetHttp
@@ -25,7 +26,7 @@ public interface BingContract {
      * 注意：model里面定义的必须与BingApi一样
      * 如果存在返回值请勿添加BaseObserver参数
      */
-    @LXModel(networkService = BingApi.class)
+    @LXModel(networkEngine = MedicalGuideNetwork.class,networkService = BingApi.class)
     interface Model {
         void bingIndex(BaseObserver observer);
     }

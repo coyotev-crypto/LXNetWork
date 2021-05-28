@@ -3,6 +3,7 @@ package cc.turbosnail.lrhnethttp.api;
 import cc.turbosnail.lrhlibrary.annotation.BaseUrl;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 
 /**
  * @ProjectName: LXNetHttp
@@ -16,8 +17,8 @@ import retrofit2.http.GET;
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */
-@BaseUrl("https://cn.bing.com/")
+@BaseUrl("http://192.168.1.105:8080")
 public interface BingApi {
-    @GET("search?form=MOZLBR&pc=MOZI&q=api")
+    @POST("/test")
     Observable<String> bingIndex();
 }

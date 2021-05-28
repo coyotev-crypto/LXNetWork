@@ -18,6 +18,6 @@ public class LrhApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HttpClient.init(false);
+        HttpClient.init(true);
     }
 }

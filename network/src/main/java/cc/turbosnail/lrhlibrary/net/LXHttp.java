@@ -12,12 +12,10 @@ package cc.turbosnail.lrhlibrary.net;
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */
-public class LXHttp{
-
-    private static HttpClient httpClient = HttpClient.getInstance();
+public class LXHttp extends HttpClient {
+    private static HttpClient httpClient = new HttpClient();
 
     public static HttpClient getInstance() {
         return httpClient;
     }
-
 }

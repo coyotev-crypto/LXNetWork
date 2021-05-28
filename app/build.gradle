@@ -14,8 +14,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs{
-        release{
+    signingConfigs {
+        release {
             storeFile file("LXNetWork.jks")
             storePassword "123456"
             keyAlias "key0"

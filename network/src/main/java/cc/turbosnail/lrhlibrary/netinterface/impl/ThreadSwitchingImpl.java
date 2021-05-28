@@ -1,7 +1,7 @@
 package cc.turbosnail.lrhlibrary.netinterface.impl;
 
 import cc.turbosnail.lrhlibrary.netinterface.AppHandlerInterface;
-import cc.turbosnail.lrhlibrary.netinterface.ThreadSwitchingInterface;
+import cc.turbosnail.lrhlibrary.netinterface.abstracts.ThreadSwitchingAbstract;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class ThreadSwitchingImpl extends ThreadSwitchingInterface {
+public class ThreadSwitchingImpl extends ThreadSwitchingAbstract {
 
     public ThreadSwitchingImpl(AppHandlerInterface appHandlerInterface) {
         super(appHandlerInterface);
@@ -23,7 +23,7 @@ public class ThreadSwitchingImpl extends ThreadSwitchingInterface {
         }
         for (Observer observer : observers) {
             Disposable disposable = mDisposable.get(observer);
-            if (disposable != null){
+            if (disposable != null && !disposable.isDisposed()){
                 disposable.dispose();
             }
         }
@@ -37,7 +37,7 @@ public class ThreadSwitchingImpl extends ThreadSwitchingInterface {
                 Observable observable = upstream.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .onErrorResumeNext(tHttpErrorHandler);
-                if (appHandlerInterface.createAppErrorHandler() != null) {
+                if (appHandlerInterface != null && appHandlerInterface.createAppErrorHandler() != null) {
                     observable.map(appHandlerInterface.createAppErrorHandler());
                 }
                 observable.subscribe(new Observer<T>() {
